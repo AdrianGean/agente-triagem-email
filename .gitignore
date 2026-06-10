@@ -1,0 +1,32 @@
+# Variaveis de ambiente
+.env
+.env.local
+
+# Banco de dados local (sessoes, memorias, traces)
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs e cache da Agno
+.agno/
+agno.log
+*.log
