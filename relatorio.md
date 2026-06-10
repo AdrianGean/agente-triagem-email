@@ -1,6 +1,6 @@
 # Relatório — Agente de Triagem de E-mails
 
-**Disciplina:** Aula 08 — Agno, AgentOS, ferramentas customizadas, memória e tracing
+**Disciplina:** Agno, AgentOS, ferramentas customizadas, memória e tracing
 **Aluno:** Adrian, Marcos Scalcon, Natan Benites — UNEMAT, Sistemas de Informação
 **Data:** 2026-06-05
 
