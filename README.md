@@ -60,6 +60,21 @@ revisão humana (`[ESCALAR PARA HUMANO]`). Não requer dependências extras:
 a página é servida pelo próprio FastAPI do AgentOS e consome o endpoint REST
 `/agents/agente-de-triagem-de-e-mails/runs`.
 
+### Autenticação (e-mail + senha)
+
+A interface `/ui` é protegida por autenticação simples ([auth.py](auth.py)):
+
+- **`/registro`** — cria a conta (e-mail + senha mínima de 6 caracteres)
+- **`/login`** — entra e recebe um cookie de sessão (HttpOnly, 8h)
+- **`/logout`** — encerra a sessão
+
+Os usuários ficam em `usuarios.db` (SQLite local, fora do Git) com senha
+**hasheada via PBKDF2 + salt** — nunca em texto puro. O `user_id` usado pelo
+agente passa a ser o e-mail logado, vinculando as memórias do agente a cada
+usuário autenticado. Observação: os endpoints REST do AgentOS continuam
+abertos localmente (necessário para o Studio); em produção, a API seria
+protegida com o JWT nativo do AgentOS.
+
 ## 4. Testando via Studio
 
 1. Acesse [https://os.agno.com](https://os.agno.com).

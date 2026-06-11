@@ -119,6 +119,10 @@ mapeamento original foram mantidos.
    - Alta prioridade com risco operacional
 3. **Marcação visível** — nesses casos a resposta começa com `[ESCALAR PARA HUMANO]` e lista os motivos.
 4. **Mascaramento de dados sensíveis** — CPF, senhas, dados bancários são mascarados antes de aparecerem na resposta sugerida.
+5. **Autenticação na interface** — o acesso à interface web local (`/ui`) exige
+   login com e-mail e senha (`auth.py`: PBKDF2 + salt, sessão por cookie HttpOnly).
+   O `user_id` do agente é o e-mail autenticado, de modo que as memórias ficam
+   vinculadas e auditáveis por operador.
 
 ---
 

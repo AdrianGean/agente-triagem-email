@@ -156,10 +156,13 @@ async def permitir_private_network(request, call_next):
 # ---------------------------------------------------------------------------
 # Interface web local (papel do Streamlit no mapeamento da Aula 08)
 # Disponivel em: http://127.0.0.1:8000/ui
+# Protegida por autenticacao simples (e-mail + senha) - ver auth.py
 # ---------------------------------------------------------------------------
+from auth import registrar_auth  # noqa: E402
 from interface import registrar_interface  # noqa: E402
 
-registrar_interface(app)
+registrar_auth(app)        # /login, /registro, /logout
+registrar_interface(app)   # /ui (exige login)
 
 
 if __name__ == "__main__":

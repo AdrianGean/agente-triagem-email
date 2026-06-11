@@ -6,7 +6,10 @@ visualizar o conteudo do e-mail), sem dependencias extras: o front-end chama
 o endpoint REST /agents/agente-de-triagem-de-e-mails/runs do proprio AgentOS.
 """
 
-from fastapi.responses import HTMLResponse
+from fastapi import Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+
+from auth import usuario_logado
 
 AGENTE_SLUG = "agente-de-triagem-de-e-mails"
 
@@ -81,17 +84,23 @@ PAGINA = """<!DOCTYPE html>
 </head>
 <body>
 <div class="container">
-  <header>
-    <h1>📧 Triagem de E-mails Operacionais</h1>
-    <p>Agente semi-autônomo (nível 2) — classifica prioridade e setor, sugere resposta
-       e sinaliza casos para revisão humana. <b>Nenhum e-mail é enviado automaticamente.</b></p>
+  <header style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+    <div>
+      <h1>📧 Triagem de E-mails Operacionais</h1>
+      <p>Agente semi-autônomo (nível 2) — classifica prioridade e setor, sugere resposta
+         e sinaliza casos para revisão humana. <b>Nenhum e-mail é enviado automaticamente.</b></p>
+    </div>
+    <div style="text-align:right; font-size:.85rem; color:var(--suave);">
+      👤 <b>__EMAIL__</b><br>
+      <a href="/logout" style="color:var(--vermelho); font-weight:600; text-decoration:none;">Sair</a>
+    </div>
   </header>
 
   <div class="card">
     <div class="linha">
       <div class="campo">
         <label>Usuário (user_id)</label>
-        <input id="userId" value="adrian">
+        <input id="userId" value="__EMAIL__" readonly title="Definido pelo login — as memórias do agente ficam vinculadas a este usuário">
       </div>
       <div class="campo">
         <label>Sessão (session_id)</label>
@@ -194,10 +203,12 @@ document.getElementById("email").addEventListener("keydown", (e) => {
 
 
 def registrar_interface(app):
-    """Registra a rota GET /ui no app FastAPI do AgentOS."""
-
-    pagina = PAGINA.replace("__SLUG__", AGENTE_SLUG)
+    """Registra a rota GET /ui no app FastAPI do AgentOS (exige login)."""
 
     @app.get("/ui", response_class=HTMLResponse, include_in_schema=False)
-    def interface_web():
+    def interface_web(request: Request):
+        email = usuario_logado(request)
+        if not email:
+            return RedirectResponse("/login", status_code=303)
+        pagina = PAGINA.replace("__SLUG__", AGENTE_SLUG).replace("__EMAIL__", email)
         return pagina

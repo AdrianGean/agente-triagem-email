@@ -56,6 +56,11 @@ Chrome). **Siga na ordem.**
 com borda vermelha e selo de revisão humana. Tudo que você fizer ali também aparece
 nas abas Sessions/Memories/Traces do Studio.
 
+**Login:** a interface exige autenticação. No primeiro acesso, clique em
+**Cadastre-se** (`/registro`), crie sua conta (e-mail + senha de 6+ caracteres)
+e você já entra logado. O `user_id` do agente passa a ser o seu e-mail.
+Usuário de teste já criado: `adrian@unemat.br` / senha `triagem123`.
+
 > **Por que `uvicorn` e não `fastapi dev`?** O `fastapi dev` usa modo *reload*, que
 > deixa processos presos na porta 8000 e tem um bug de emoji no Windows. O `uvicorn`
 > direto é mais estável e faz a mesma coisa. (As duas formas estão no README.)
