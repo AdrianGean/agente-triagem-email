@@ -45,9 +45,20 @@ fastapi dev agente.py
 
 A API sobe em `http://localhost:8000`. Endpoints úteis:
 
+- `GET  /ui`                — **interface web local** (inserir e-mail e ver a triagem)
 - `GET  /health`            — health check
 - `POST /agents/.../runs`   — endpoint do agente
 - `GET  /docs`              — Swagger UI (gerado pelo FastAPI)
+
+### Interface web local
+
+Além do Studio, o projeto inclui uma interface própria em
+**`http://127.0.0.1:8000/ui`** ([interface.py](interface.py)) — cumpre o papel
+do Streamlit previsto no mapeamento da Aula 08: campo para colar o e-mail,
+triagem com um clique e destaque visual em vermelho para casos que exigem
+revisão humana (`[ESCALAR PARA HUMANO]`). Não requer dependências extras:
+a página é servida pelo próprio FastAPI do AgentOS e consome o endpoint REST
+`/agents/agente-de-triagem-de-e-mails/runs`.
 
 ## 4. Testando via Studio
 

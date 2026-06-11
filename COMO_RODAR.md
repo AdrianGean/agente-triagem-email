@@ -51,6 +51,11 @@ Chrome). **Siga na ordem.**
 **Confirmação:** abra `http://127.0.0.1:8000/health` no navegador → deve mostrar
 `{"status":"ok",...}`.
 
+**Interface web local:** com o servidor no ar, abra **`http://127.0.0.1:8000/ui`** —
+é a interface própria do projeto (cola o e-mail → Triar). Os casos críticos aparecem
+com borda vermelha e selo de revisão humana. Tudo que você fizer ali também aparece
+nas abas Sessions/Memories/Traces do Studio.
+
 > **Por que `uvicorn` e não `fastapi dev`?** O `fastapi dev` usa modo *reload*, que
 > deixa processos presos na porta 8000 e tem um bug de emoji no Windows. O `uvicorn`
 > direto é mais estável e faz a mesma coisa. (As duas formas estão no README.)

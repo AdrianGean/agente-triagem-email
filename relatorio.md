@@ -32,11 +32,14 @@
 ### Adaptação em relação ao mapeamento da Aula 08
 
 No mapeamento original, a interface prevista era **Streamlit**. Nesta implementação,
-esse papel foi assumido pelo **Studio do AgentOS (os.agno.com)**: o Chat do Studio é
-onde o operador insere o conteúdo do e-mail e visualiza a triagem. A troca é vantajosa
-porque o Studio já fornece, sem código adicional, histórico de sessões, visualização
-de memórias e tracing das ferramentas — recursos que precisariam ser implementados
-manualmente em uma aplicação Streamlit. O LLM (OpenAI) e as regras de salvaguarda do
+esse papel é cumprido de duas formas: (1) pelo **Studio do AgentOS (os.agno.com)**,
+que fornece chat, sessões, memórias e tracing sem código adicional; e (2) por uma
+**interface web própria** (`interface.py`), servida pelo próprio FastAPI do AgentOS
+em `http://127.0.0.1:8000/ui` — com campo para inserir o conteúdo do e-mail,
+visualização da triagem e destaque visual (borda vermelha + selo) para casos que
+exigem revisão humana. A interface própria consome o endpoint REST
+`/agents/agente-de-triagem-de-e-mails/runs`, demonstrando o consumo da API do
+AgentOS por uma aplicação cliente. O LLM (OpenAI) e as regras de salvaguarda do
 mapeamento original foram mantidos.
 
 ### Ferramentas (tools) e suas responsabilidades

@@ -153,6 +153,15 @@ async def permitir_private_network(request, call_next):
     return await call_next(request)
 
 
+# ---------------------------------------------------------------------------
+# Interface web local (papel do Streamlit no mapeamento da Aula 08)
+# Disponivel em: http://127.0.0.1:8000/ui
+# ---------------------------------------------------------------------------
+from interface import registrar_interface  # noqa: E402
+
+registrar_interface(app)
+
+
 if __name__ == "__main__":
     # Execucao direta:  python agente.py
     # (alternativa equivalente a:  fastapi dev agente.py)
