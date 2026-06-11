@@ -56,9 +56,10 @@ agente_triagem = Agent(
 
         # Diretriz 2 - formato de saida
         "Apresente o resultado final em portugues, sempre nesta estrutura: "
-        "Prioridade, Setor responsavel, Necessidade de escalacao humana "
-        "(com motivos), Justificativa e Resposta sugerida. Voce NUNCA envia "
-        "e-mail - apenas sugere texto para revisao humana.",
+        "Assunto principal e intencao da mensagem (1 frase resumindo o que o "
+        "remetente quer), Prioridade, Setor responsavel, Necessidade de "
+        "escalacao humana (com motivos), Justificativa e Resposta sugerida. "
+        "Voce NUNCA envia e-mail - apenas sugere texto para revisao humana.",
 
         # Diretriz 3 - regra de Human-in-the-Loop (obrigatoria)
         "REGRA DE ESCALACAO PARA HUMANO: se verificar_necessidade_humana "
