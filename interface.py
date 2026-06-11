@@ -85,6 +85,9 @@ PAGINA = """<!DOCTYPE html>
   .hist-titulo { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hist-data { color: var(--suave); white-space: nowrap; font-size: .78rem; }
   .hist-vazio { color: var(--suave); font-size: .85rem; margin-top: 8px; }
+  .btn-apagar { background: transparent; border: 0; cursor: pointer;
+    font-size: .9rem; padding: 2px 6px; border-radius: 6px; line-height: 1; }
+  .btn-apagar:hover { background: #fee2e2; }
   .carregando { display: inline-block; width: 16px; height: 16px;
     border: 3px solid var(--borda); border-top-color: var(--azul);
     border-radius: 50%; animation: girar .7s linear infinite; vertical-align: middle; }
@@ -244,7 +247,12 @@ async function carregarHistorico() {
       data.className = "hist-data";
       data.textContent = s.created_at
         ? new Date(s.created_at).toLocaleString("pt-BR") : "";
-      div.append(titulo, data);
+      const btnApagar = document.createElement("button");
+      btnApagar.className = "btn-apagar";
+      btnApagar.title = "Apagar esta triagem do histórico";
+      btnApagar.textContent = "🗑️";
+      btnApagar.onclick = (ev) => { ev.stopPropagation(); apagarSessao(s.session_id); };
+      div.append(titulo, data, btnApagar);
       alvo.appendChild(div);
     }
   } catch (e) {
@@ -269,6 +277,21 @@ async function abrirSessao(sessionId) {
     status.textContent = `Sessão "${sessionId}" carregada (${runs.length} triagem(ns)) — novas mensagens continuam nela.`;
   } catch (e) {
     status.textContent = "Erro ao abrir sessão: " + e.message;
+  }
+}
+
+async function apagarSessao(sessionId) {
+  if (!confirm("Apagar esta triagem do histórico? Esta ação não pode ser desfeita.")) return;
+  const status = document.getElementById("status");
+  try {
+    const r = await fetch(`/sessions/${encodeURIComponent(sessionId)}`, { method: "DELETE" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    // se a sessao apagada era a aberta, comeca uma nova e limpa a conversa
+    if (document.getElementById("sessionId").value === sessionId) novaSessao();
+    status.textContent = "Triagem apagada do histórico. 🗑️";
+    carregarHistorico();
+  } catch (e) {
+    status.textContent = "Erro ao apagar: " + e.message;
   }
 }
 

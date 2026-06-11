@@ -63,8 +63,9 @@ a página é servida pelo próprio FastAPI do AgentOS e consome o endpoint REST
 A interface também traz um painel **📜 Histórico de triagens**: lista as sessões
 anteriores do usuário logado (via `GET /sessions`) e, ao clicar em uma, recarrega
 as mensagens (`GET /sessions/{id}/runs`) e **retoma a sessão** — novas triagens
-continuam nela. O histórico é por usuário: cada e-mail logado vê apenas as
-próprias triagens.
+continuam nela. Cada item tem um botão **🗑️ apagar** (com confirmação), que
+remove a triagem do banco via `DELETE /sessions/{id}`. O histórico é por
+usuário: cada e-mail logado vê apenas as próprias triagens.
 
 ### Autenticação (e-mail + senha)
 
