@@ -76,6 +76,15 @@ PAGINA = """<!DOCTYPE html>
   .msg ul { margin: 4px 0 4px 20px; }
   .msg b { font-weight: 700; }
   .rodape { text-align: center; color: var(--suave); font-size: .8rem; margin-top: 20px; }
+  .hist-cabecalho { display: flex; justify-content: space-between; align-items: center; }
+  .btn-mini { padding: 6px 12px; font-size: .8rem; }
+  .hist-item { padding: 10px 12px; border: 1px solid var(--borda); border-radius: 8px;
+    margin-top: 8px; cursor: pointer; font-size: .88rem; display: flex;
+    justify-content: space-between; gap: 10px; background: #fbfcfe; }
+  .hist-item:hover { border-color: var(--azul); background: #eef4ff; }
+  .hist-titulo { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hist-data { color: var(--suave); white-space: nowrap; font-size: .78rem; }
+  .hist-vazio { color: var(--suave); font-size: .85rem; margin-top: 8px; }
   .carregando { display: inline-block; width: 16px; height: 16px;
     border: 3px solid var(--borda); border-top-color: var(--azul);
     border-radius: 50%; animation: girar .7s linear infinite; vertical-align: middle; }
@@ -114,6 +123,14 @@ PAGINA = """<!DOCTYPE html>
       <button class="btn-secundario" onclick="novaSessao()">Nova sessão</button>
       <span class="status" id="status"></span>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="hist-cabecalho">
+      <label>📜 Histórico de triagens</label>
+      <button class="btn-secundario btn-mini" onclick="carregarHistorico()">Atualizar</button>
+    </div>
+    <div id="historico"><p class="hist-vazio">Carregando...</p></div>
   </div>
 
   <div class="conversa" id="conversa"></div>
@@ -185,6 +202,7 @@ async function triar() {
     if (!r.ok) throw new Error(JSON.stringify(data).slice(0, 300));
     adiciona(data.content || "(sem conteúdo na resposta)", "agente");
     status.textContent = "Triagem concluída ✓ (registrada em Sessions/Traces)";
+    carregarHistorico();
   } catch (e) {
     adiciona("Erro ao executar a triagem: " + e.message, "agente");
     status.textContent = "Falha — verifique se a chave da API está válida.";
@@ -193,10 +211,73 @@ async function triar() {
   }
 }
 
+// ------------------- Historico de triagens -------------------
+function textoDoInput(ri) {
+  // run_input pode ser string simples ou objeto/JSON {input_content: ...}
+  if (ri && typeof ri === "object") return ri.input_content || JSON.stringify(ri);
+  if (typeof ri === "string" && ri.trim().startsWith("{")) {
+    try { const o = JSON.parse(ri); return o.input_content || ri; } catch {}
+  }
+  return ri || "(mensagem nao registrada)";
+}
+
+async function carregarHistorico() {
+  const uid = document.getElementById("userId").value;
+  const alvo = document.getElementById("historico");
+  try {
+    const r = await fetch(`/sessions?type=agent&user_id=${encodeURIComponent(uid)}`);
+    const d = await r.json();
+    const sessoes = d.data || [];
+    alvo.innerHTML = "";
+    if (!sessoes.length) {
+      alvo.innerHTML = '<p class="hist-vazio">Nenhuma triagem anterior para este usuário.</p>';
+      return;
+    }
+    for (const s of sessoes) {
+      const div = document.createElement("div");
+      div.className = "hist-item";
+      div.onclick = () => abrirSessao(s.session_id);
+      const titulo = document.createElement("span");
+      titulo.className = "hist-titulo";
+      titulo.textContent = (s.session_name || s.session_id).slice(0, 90);
+      const data = document.createElement("span");
+      data.className = "hist-data";
+      data.textContent = s.created_at
+        ? new Date(s.created_at).toLocaleString("pt-BR") : "";
+      div.append(titulo, data);
+      alvo.appendChild(div);
+    }
+  } catch (e) {
+    alvo.innerHTML = '<p class="hist-vazio">Erro ao carregar histórico: ' + e.message + '</p>';
+  }
+}
+
+async function abrirSessao(sessionId) {
+  const status = document.getElementById("status");
+  status.textContent = "Carregando sessão...";
+  try {
+    const r = await fetch(`/sessions/${encodeURIComponent(sessionId)}/runs?type=agent`);
+    const d = await r.json();
+    const runs = Array.isArray(d) ? d : (d.data || []);
+    document.getElementById("conversa").innerHTML = "";
+    for (const run of runs) {
+      adiciona(textoDoInput(run.run_input), "user");
+      adiciona(run.content || "(sem resposta)", "agente");
+    }
+    // retoma a sessao aberta: novas triagens continuam nela
+    document.getElementById("sessionId").value = sessionId;
+    status.textContent = `Sessão "${sessionId}" carregada (${runs.length} triagem(ns)) — novas mensagens continuam nela.`;
+  } catch (e) {
+    status.textContent = "Erro ao abrir sessão: " + e.message;
+  }
+}
+
 // Ctrl+Enter envia
 document.getElementById("email").addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.key === "Enter") triar();
 });
+
+carregarHistorico();
 </script>
 </body>
 </html>"""

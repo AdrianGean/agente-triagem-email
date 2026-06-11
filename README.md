@@ -60,6 +60,12 @@ revisão humana (`[ESCALAR PARA HUMANO]`). Não requer dependências extras:
 a página é servida pelo próprio FastAPI do AgentOS e consome o endpoint REST
 `/agents/agente-de-triagem-de-e-mails/runs`.
 
+A interface também traz um painel **📜 Histórico de triagens**: lista as sessões
+anteriores do usuário logado (via `GET /sessions`) e, ao clicar em uma, recarrega
+as mensagens (`GET /sessions/{id}/runs`) e **retoma a sessão** — novas triagens
+continuam nela. O histórico é por usuário: cada e-mail logado vê apenas as
+próprias triagens.
+
 ### Autenticação (e-mail + senha)
 
 A interface `/ui` é protegida por autenticação simples ([auth.py](auth.py)):
